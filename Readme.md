@@ -22,5 +22,8 @@ connection.connect(function(err) {
     .use('some-database') // Db will be created if it doesn't exist
     .drop() // drop db before creation
     .migrate('db/migrations') // relative path to migrations
+    .run(function(err) {
+      console.log('Migration complete:', arguments)
+    }) 
 })
 ```
