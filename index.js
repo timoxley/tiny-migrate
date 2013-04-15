@@ -46,7 +46,7 @@ TinyMigrate.prototype.run = function run(fn) {
 
   this._enqueue(createDB.bind(null, this.connection, this._db))
   this._enqueue(useDB.bind(null, this.connection, this._db))
-  this._enqueue(migrate.bind(null, this.connection, this._dir))
+  if (this._dir) this._enqueue(migrate.bind(null, this.connection, this._dir))
 
   var exec = fnSeries.bind(null, this._queue)
   exec(fn)
@@ -113,7 +113,7 @@ function useDB(connection, name, fn) {
 
 function migrate(connection, dir, fn) {
   var query = concatSQL(dir)
-  debug('migrating...')
+  debug('migrating...' + ' Query length: ' + query.length)
   connection.query(query, fn)
 }
 
