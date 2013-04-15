@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .version('0.0.1')
+  .option('-u, --user [user]', 'MySQL User')
+  .option('-p, --pass [pass]', 'MySQL Password')
+  .option('-h, --host [host]', 'MySQL Host', 'localhost')
+  .option('-D, --database [database]', 'MySQL Database Name')
+  .option('-f, --flush', 'Drop database before migrating.')
+  .parse(process.argv);
+
+
+var dir = program.args && program.args[0] || '.';
+
+var mysql = require('mysql')
+var config = {
+  multipleStatements: true
+}
+
+config.host = program.host
+config.user = program.user
+config.password = program.pass
+config.host = program.host
+
+var connection = mysql.createConnection(config);
+connection.connect(function(err) {
+  if (err) console.error(err) && process.exit(1)
+  var migrate = require('../')(connection)
+  if (!program.database) return console.error('Database name (-D) required.') && process.exit(1)
+  if (!dir) return console.error('Directory required.') && process.exit(1)
+
+  migrate(dir, program.database, function(err) {
+    if (err) console.error(err) && process.exit(1)
+  })
+})

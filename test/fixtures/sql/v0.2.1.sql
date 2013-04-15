@@ -1,0 +1,2 @@
+ALTER TABLE `Users` ADD `email` VARCHAR(50) NOT NULL AFTER `id`;
+ALTER TABLE `Users` ADD `username` VARCHAR(50) NOT NULL AFTER `email`;
