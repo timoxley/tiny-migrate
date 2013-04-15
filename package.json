@@ -1,16 +1,30 @@
 {
   "name": "tiny-migrate",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "ERROR: No README.md file found!",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "",
-  "author": "",
-  "license": "BSD",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/timoxley/tiny-migrate.git"
+  },
+  "author": "Tim Oxley",
+  "license": "MIT",
   "dependencies": {
     "mysql": "~2.0.0-alpha7",
-    "commander": "~1.1.1"
-  }
+    "commander": "~1.1.1",
+    "debug": "~0.7.2"
+  },
+  "readmeFilename": "Readme.md",
+  "gitHead": "6c329e2e4ca07e2dd4980b8690352c7794cb9622",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "mysql",
+    "migration"
+  ]
 }

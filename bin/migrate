@@ -9,6 +9,7 @@ program
   .option('-h, --host [host]', 'MySQL Host', 'localhost')
   .option('-D, --database [database]', 'MySQL Database Name')
   .option('-f, --flush', 'Drop database before migrating.')
+  .option('-v, --verbose', 'Verbose output.')
   .parse(process.argv);
 
 
@@ -24,14 +25,23 @@ config.user = program.user
 config.password = program.pass
 config.host = program.host
 
+process.env.DEBUG = process.env.DEBUG || ''
+if (program.verbose) process.env.DEBUG += ',tiny-migrate'
+
 var connection = mysql.createConnection(config);
 connection.connect(function(err) {
-  if (err) console.error(err) && process.exit(1)
-  var migrate = require('../')(connection)
-  if (!program.database) return console.error('Database name (-D) required.') && process.exit(1)
-  if (!dir) return console.error('Directory required.') && process.exit(1)
+  if (err) console.error(err), process.exit(1)
+  var migration = require('../')(connection)
+  if (!program.database) return console.error('Database name (-D) required.'), process.exit(1)
+  if (!dir) return console.error('Directory required.'), process.exit(1)
 
-  migrate(dir, program.database, function(err) {
-    if (err) console.error(err) && process.exit(1)
+  if (program.flush) migration.drop()
+
+  migration
+  .use(program.database)
+  .migrate(dir)
+  .run(function(err) {
+    if (err) console.error(err), process.exit(1)
+    process.exit()
   })
 })

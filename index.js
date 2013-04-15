@@ -2,6 +2,7 @@
 
 var fs = require('fs')
 var mysql = require('mysql')
+var debug = require('debug')('tiny-migrate')
 
 /**
  * Set connection to use a particular DB.
@@ -11,37 +12,10 @@ var mysql = require('mysql')
  * @api public
  */
 
-module.exports = function(connection) {
-  return new TinyMigrate(connection)
-  //return function (options, fn) {
-    //options = options || {}
-    //var connection = options.connection
-    //var name = options.name
-
-    //var flush = options.flush || false
-    //if (flush) {
-      //dropDB(function(err) {
-        //if (err) return fn(err)
-        //migrate(fn)
-      //})
-    //} else {
-      //migrate(fn)
-    //}
-
-    //function migrate(fn) {
-      //createDB(connection, name, function(err) {
-        //if (err) return fn(err)
-          //useDB(connection, name, function(err) {
-            //if (err) return fn(err)
-              //connection.query(concatSQL(dir), fn)
-          //})
-      //}) 
-    //}
-  //}
-}
+module.exports = TinyMigrate
 
 function TinyMigrate(connection) {
-  if (!(this instanceof TinyMigrate)) return new TinyMigrate(db)
+  if (!(this instanceof TinyMigrate)) return new TinyMigrate(connection)
   this.connection = connection
   this._queue = []
 }
@@ -54,12 +28,6 @@ TinyMigrate.prototype.use = function use(db, fn) {
 
 TinyMigrate.prototype.migrate = function migrate(dir, fn) {
   this._dir = dir
-  if (fn) return this.run(fn)
-  return this
-}
-
-TinyMigrate.prototype.flush = function flush(fn) {
-  this._flush = true
   if (fn) return this.run(fn)
   return this
 }
@@ -108,7 +76,9 @@ function fnSeries(queue, fn) {
  */
 
 function dropDB(connection, name, fn) {
-  connection.query('DROP DATABASE IF EXISTS `'+ name +'`;', fn) 
+  var query = 'DROP DATABASE IF EXISTS `'+ name +'`;'
+  debug(query)
+  connection.query(query, fn)
 }
 
 /**
@@ -121,7 +91,9 @@ function dropDB(connection, name, fn) {
  */
 
 function createDB(connection, name, fn) {
-  connection.query('CREATE DATABASE IF NOT EXISTS `'+name+'`;', fn)
+  var query = 'CREATE DATABASE IF NOT EXISTS `'+name+'`;'
+  debug(query)
+  connection.query(query, fn)
 }
 
 /**
@@ -134,11 +106,15 @@ function createDB(connection, name, fn) {
  */
 
 function useDB(connection, name, fn) {
-  connection.query('USE `'+ name +'`;', fn)
+  var query = 'USE `'+ name +'`;'
+  debug(query)
+  connection.query(query, fn)
 }
 
 function migrate(connection, dir, fn) {
-  connection.query(concatSQL(dir), fn)
+  var query = concatSQL(dir)
+  debug('migrating...')
+  connection.query(query, fn)
 }
 
 /**
