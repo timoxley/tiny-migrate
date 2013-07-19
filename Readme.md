@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/timoxley/tiny-migrate.png?branch=master)](https://travis-ci.org/timoxley/tiny-migrate)
+
 # tiny-migrate
 
 Naive sql migrations. Just supply a directory of versioned/numbered .sql files,
